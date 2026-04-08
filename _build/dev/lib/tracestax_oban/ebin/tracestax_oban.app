@@ -1,0 +1,10 @@
+{application,tracestax_oban,
+             [{modules,['Elixir.TraceStax','Elixir.TraceStax.Client',
+                        'Elixir.TraceStax.ObanPlugin']},
+              {optional_applications,[]},
+              {applications,[kernel,stdlib,elixir,logger,inets,oban,req,
+                             jason]},
+              {description,"TraceStax Oban integration for job monitoring"},
+              {registered,[]},
+              {vsn,"0.1.0"},
+              {mod,{'Elixir.TraceStax',[]}}]}.
