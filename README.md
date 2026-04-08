@@ -88,7 +88,7 @@ Each completed or failed job generates a `task_event` payload containing:
 
 ## Example worker
 
-No changes to worker code are needed — the plugin hooks into Oban's Telemetry
+No changes to worker code are needed - the plugin hooks into Oban's Telemetry
 events automatically:
 
 ```elixir
