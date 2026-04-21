@@ -34,11 +34,22 @@ defmodule TraceStax.ResilienceTest do
         {:error, {:already_started, pid}} -> pid
       end
 
-    # Clear any leftover events in the queue
-    :sys.replace_state(TraceStax.Client, fn s -> %{s | queue: :queue.new()} end)
+    # Clear queue and force the dead-endpoint config into the live GenServer state.
+    # If the GenServer was already running (supervised), it may have the real
+    # endpoint stored in state from init/1 — Application.put_env alone won't
+    # update that. We patch state directly so the flush loop never hits a real server.
+    :sys.replace_state(TraceStax.Client, fn s ->
+      %{s | queue: :queue.new(), endpoint: "http://127.0.0.1:1", api_key: "ts_test_resilience"}
+    end)
 
     on_exit(fn ->
-      if Process.alive?(pid), do: GenServer.stop(pid, :normal, 500)
+      if Process.alive?(pid) do
+        try do
+          GenServer.stop(pid, :normal, 500)
+        catch
+          :exit, _ -> :ok
+        end
+      end
     end)
 
     {:ok, pid: pid}
